@@ -63,10 +63,10 @@ def get_all_people():
 
     return jsonify(all_people), 200
 
-@app.route('/people/<int:people_id>', methods = ['GET'])
+@app.route('/people/<int:id>', methods = ['GET'])
 @jwt_required()
-def get_people(people_id):
-    people= People.get_people(people_id)
+def get_people(id):
+    people= People.get_people(id)
 
     return jsonify(people),200
 
@@ -77,10 +77,7 @@ def create_people():
     if body is None:
         return {"error": "The body is null or undefined"}, 400
     
-    people = People.get_user(body['email'])
-    user_id = user.id
-
-    people.create_people(user_id, body['name'])
+    people = People.create_people(body['name'], body['birth_year'], body['gender'], body['height'], body['mass'], body['hair_color'], body['skin_color'], body['eye_color'] )
     
     return {"message": "people created"}, 200
 
@@ -91,10 +88,10 @@ def get_all_planets():
 
     return jsonify(planets), 200
 
-@app.route('/planet/<int:planet_id>', methods=['GET'])
+@app.route('/planet/<int:id>', methods=['GET'])
 @jwt_required()
-def get_planet(planet_id):
-    planet = Planet.get_planet(planet_id)
+def get_planet(id):
+    planet = Planet.get_planet(id)
 
     return jsonify(planet), 200
 
@@ -105,11 +102,8 @@ def create_planet():
     if body is None:
         return {"error": "The body is null or undefined"}, 400
     
-    Planet = Planet.get_user(body['email'])
-    user_id = user.id
-
-    Planet.create_planet(user_id, body['name'])
-    
+    planet = Planet.create_planet(body['name'], body['rotation_period'], body['orbital_period'], body['diameter'], body['climate'], body['terrain'], body['surface_water'], body['population']  )
+   
     return {"message": "planet created"}, 200
 
 @app.route('/favorite/people/<int:people_id>', methods=['POST'])

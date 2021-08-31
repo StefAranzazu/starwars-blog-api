@@ -19,8 +19,8 @@ class User(db.Model):
             # do not serialize the password, its a security breach
         }
     
-    def get_user(email):
-        user = User.query.filter_by(email=email).first()
+    def get_user(email, password):
+        user = User.query.filter_by(email=email, password=password).first()
         return user
 
 class People(db.Model):
@@ -47,21 +47,25 @@ class People(db.Model):
             "hair_color": self.hair_color,
             "skin_color": self.skin_color,
             "eye_color": self.eye_color,
-            "user_owner": User.serialize(self.user)
         }
-    def create_people(name):
-        people = People(name=name)
+    def create_people(name, birth_year, gender, height, mass, hair_color, skin_color, eye_color):
+        people = People(name=name, birth_year=birth_year, gender=gender, height=height, mass=mass, hair_color=hair_color, skin_color=skin_color, eye_color=eye_color)
         db.session.add(people)
         db.session.commit()
 
-    def get_people(name):
-        people = People.query.filter_by(name=name).first()
-        return people
+    def get_people(id):
+        people = People.query.filter_by(id=id).first()
+        return People.serialize(people)
 
     def get_all_people():
         all_people = People.query.all()
         all_people = list(map(lambda people: people.serialize(), all_people))
         return all_people
+
+    def delete_people(id):
+        people = People.query.get(id)
+        db.session.delete(people)
+        db.session.commit()
 
 
 class Planet(db.Model):
@@ -90,23 +94,26 @@ class Planet(db.Model):
             "terrain": self.terrain,
             "surface_water": self.surface_water,
             "population": self.population,
-            "user_owner": User.serialize(self.user)
             }
 
-    def create_planet(name):
-        planet = Planet(name=name)
+    def create_planet(name, rotation_period, orbital_period, diameter, climate, terrain, surface_water, population):
+        planet = Planet(name=name, rotation_period=rotation_period, orbital_period=orbital_period, diameter=diameter, climate=climate, terrain=terrain, surface_water=surface_water, population=population)
         db.session.add(planet)
         db.session.commit()
-        
-        
-    def get_planet(name):
-        planet = Planet.query.filter_by(name=name).first()
-        return planet
+
+    def get_planet(id):
+        planet = Planet.query.filter_by(id=id)
+        return Planet.serialize(planet)
 
     def get_all_planets():
         planets = Planet.query.all()
         planets = list(map(lambda planet: planet.serialize(), planets))
         return planets
+    
+    def delete_planet(id):
+        planet = Planet.query.get(id)
+        db.session.delete(planet)
+        db.session.commit()
 
 
 class Favorite(db.Model):
